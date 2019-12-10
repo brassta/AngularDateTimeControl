@@ -1,0 +1,11 @@
+<agenzzia-time-header [time]="time" (headerValueChanged)="handleHeaderChanges($event)"></agenzzia-time-header>
+<div class="month-matrix-wrapper">
+  <ul class="months">
+    <li *ngFor="let month of months" class="month">
+      <button class="btn btn-date" (click)="setDateValue(month)"
+              [ngClass]="{
+                'active': checkIsActualMonth(month)
+              }">{{month.monthShortName}}</button>
+    </li>
+  </ul>
+</div>

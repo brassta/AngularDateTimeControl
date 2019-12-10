@@ -1,0 +1,41 @@
+<div class="month-date-time-control-wrapper">
+  {{fullDateTimeObject | json}}
+  <div class="presentation-wrapper">
+    <label for="outValueRepresentation">{{fullDateTimeObject.label}}</label>
+    <input type="textbox" id="outValueRepresentation"
+           (blur)="timeValueChangedManually($event)"
+           (change)="keyUpCalled($event)"
+           [placeholder]="fullDateTimeObject.placeholderValue"
+           [(ngModel)]="fullDateTimeObject.timeInputPresentation"/>
+    <button class="icon" click="openModalControl" [ngClass]="{
+            'all':mode==='All',
+            'month':mode==='Month',
+            'date':mode==='Date',
+            'date-time':mode==='DateTime',
+            'time':mode==='Time'
+            }"
+            (click)="toggleOpenedModal()"
+    ></button>
+  </div>
+  <input [(ngModel)]="fullDateTimeObject.realExportValue"/>
+  <div class="popup-component">
+    <div class="popup-wrapper" [ngClass]="{'opened': opened}">
+      <button class="close" (click)="closeModal()"><i class="fa fas fa-times"></i></button>
+      <ng-container *ngIf="mode==='All'">
+        <p>all</p>
+      </ng-container>
+      <ng-container *ngIf="mode==='Month'">
+        <agenzzia-month-picker [time]="fullDateTimeObject"></agenzzia-month-picker>
+      </ng-container>
+      <ng-container *ngIf="mode==='Date'">
+        <agenzzia-date-picker [time]="fullDateTimeObject"></agenzzia-date-picker>
+      </ng-container>
+      <ng-container *ngIf="mode==='DateTime'">
+        <agenzzia-date-time-picker [time]="fullDateTimeObject"></agenzzia-date-time-picker>
+      </ng-container>
+      <ng-container *ngIf="mode==='Time'">
+        <agenzzia-time-picker [time]="fullDateTimeObject"></agenzzia-time-picker>
+      </ng-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<agenzzia-time-header [time]="time" (headerValueChanged)="handleHeaderChanges($event)"></agenzzia-time-header>
+<div class="date-matrix-wrapper">
+  <ul class="dates">
+    <li *ngFor="let date of days" class="date">
+      <button class="btn btn-date" (click)="setDateValue(date)"
+              [ngClass]="{
+                'previous' : date.monthData.monthStyleIdentifier==='previous',
+                'current' : date.monthData.monthStyleIdentifier==='current',
+                'next' : date.monthData.monthStyleIdentifier==='next',
+                'active': checkIsActualDate(date.value)
+              }">{{date.value}}</button>
+    </li>
+  </ul>
+</div>

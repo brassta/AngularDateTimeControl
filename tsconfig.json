@@ -1,0 +1,51 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "jszip": [
+        "node_modules/jszip/dist/jszip.min.js"
+      ],
+      "@services/*": [
+        "src/app/Services/*"
+      ],
+      "@components/*": [
+        "src/app/Components/*"
+      ],
+      "@models/*": [
+        "src/app/Models/*"
+      ],
+      "@constants/*": [
+        "src/app/Constants/*"
+      ],
+      "@data-mocks/*": [
+        "src/app/MockData/*"
+      ],
+      "@custom-directives/*": [
+        "src/app/CustomDirectives/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
+      ],
+      "@pipes/*": [
+        "src/app/Pipes/*"
+      ]
+    }
+  }
+}

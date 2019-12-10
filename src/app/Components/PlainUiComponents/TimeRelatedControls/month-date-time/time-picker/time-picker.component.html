@@ -1,0 +1,25 @@
+<span class="bar"></span>
+<div class="time-picker-wrapper" [attr.timepickerid]="'1234'">
+
+  <div class="control-inner-wrapper time">
+    <div class="values-wrapper">
+      <div class="value-block">
+        <button class="time-control-btn btn-up" (click)="changeValue('hours', 'up')"><i class="fal fa-chevron-up"></i></button>
+        <span class="hour-value">{{rebuildHours(hours) | number:'2.0'}}</span>
+        <button class="time-control-btn btn-down" (click)="changeValue('hours', 'down')"><i class="fal fa-chevron-down"></i></button>
+      </div>
+      <div class="value-block divider">{{divider}}</div>
+      <div class="value-block">
+        <button class="time-control-btn btn-up" (click)="changeValue('minutes', 'up')"><i class="fal fa-chevron-up"></i></button>
+        <span class="hour-value">{{minutes | number:'2.0'}}</span>
+        <button class="time-control-btn btn-down" (click)="changeValue('minutes', 'down')"><i class="fal fa-chevron-down"></i></button>
+      </div>
+      <div class="value-block divider" *ngIf="needAMPM">{{divider}}</div>
+      <div class="value-block" *ngIf="needAMPM">
+        <button class="time-control-btn btn-up" (click)="changeValue('ampm',null)"><i class="fal fa-chevron-up"></i></button>
+        <span class="hour-value">{{amPmDayPartRepresentation}}</span>
+        <button class="time-control-btn btn-down" (click)="changeValue('ampm',null)"><i class="fal fa-chevron-down"></i></button>
+      </div>
+    </div>
+  </div>
+</div>

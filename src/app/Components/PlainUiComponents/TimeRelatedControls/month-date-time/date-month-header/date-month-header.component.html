@@ -1,0 +1,13 @@
+<div class="time-header-wrapper">
+  <div class="control-inner-wrapper time-header">
+    <button class="time-control-btn year-previous" (click)="changeHeaderValue('Year','Prev')"><i class="fas fa-caret-left"></i><i class="fas fa-caret-left"></i></button>
+    <button *ngIf="time.mode !== 'Month'" class="time-control-btn month-previous" (click)="changeHeaderValue('Month','Prev')"><i class="fas fa-caret-left"></i></button>
+    <div class="control-title">
+      <div class="titile year" [attr.data-year-number-representation]="yearNumberRepresentation" contenteditable="true" (blur)="titleChanged($event, 'Year')">{{time.year}}</div>
+      <div *ngIf="time.mode !== 'Month'" class="title month" [attr.data-month-number-representation]="monhNumberRepresentaiton" contenteditable="true" (blur)="titleChanged($event, 'Month')">{{time.monthLongName}}</div>
+      <button class="time-control-btn reset"><i class="fa fa-caret-up" (click)="resetValuesOfHeader()"></i></button>
+    </div>
+    <button *ngIf="time.mode !== 'Month'" class="time-control-btn mont-next" (click)="changeHeaderValue('Month','Next')"><i class="fas fa-caret-right"></i></button>
+    <button class="time-control-btn year-next" (click)="changeHeaderValue('Year','Next')"><i class="fas fa-caret-right"></i><i class="fas fa-caret-right"></i></button>
+  </div>
+</div>
