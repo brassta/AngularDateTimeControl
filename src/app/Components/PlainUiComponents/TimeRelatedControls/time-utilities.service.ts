@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {UtilitiesService} from "@services/Utilities/utilities.service";
-import {AdditionalDataModel, FullDateTimeObjectModel} from "@components/PlainUiComponents/TimeRelatedControls/month-date-time/month-date-time.component";
+import {AdditionalDataModel, FullDateTimeObjectModel, MonthDateTimeControlModes} from "@components/PlainUiComponents/TimeRelatedControls/month-date-time/month-date-time.component";
 import {possibleTimeModesEnum} from "@components/PlainUiComponents/TimeRelatedControls/time-parser";
 import {MonthDataObject} from "@components/PlainUiComponents/TimeRelatedControls/month-date-time/month-picker/month-picker.component";
 
@@ -18,6 +18,15 @@ export class TimeUtilitiesService {
 
   constructor() {
   }
+
+  /**
+   * ---------------------------------------------------------------------------------------------
+   * reference regex for validate dates
+   * https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s04.html
+   * https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s05.html
+   * https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s06.html
+   * ---------------------------------------------------------------------------------------------
+   */
 
 
   public static getMonthNamesLong(locale = 'en'): string[] {
@@ -78,72 +87,51 @@ export class TimeUtilitiesService {
 
   public static rebuildTimeObject(time: Date, additionalData?: AdditionalDataModel) {
     let fullDateTimeObject: FullDateTimeObjectModel;
+    let hasTime: boolean;
+    let tempTime: Date;
     const locale = additionalData ? additionalData.inputData.locale : 'en';
     const mode = additionalData ? additionalData.mode : 'Date';
-    UtilitiesService.ColorizeLogGreen('mode', additionalData, mode, locale)
     const label = additionalData ? additionalData.inputData.label : '';
-
     if (UtilitiesService.isExisty(time)) {
-      const monthIndex = time.getMonth();
-      const dayIndex = time.getDay();
-      const monthLongName = TimeUtilitiesService.getMonthNamesLong(locale)[monthIndex];
-      const monthShortName = TimeUtilitiesService.getMonthNamesShort(locale)[monthIndex];
-      const dayNameLong = TimeUtilitiesService.getDayNamesLong(locale)[dayIndex];
-      const dayNameShort = TimeUtilitiesService.getDayNamesShort(locale)[dayIndex];
-      const date = time.getDate();
-      const year = time.getFullYear();
-
-
-      fullDateTimeObject = Object.assign({}, {
-        value: time,
-        label,
-        date,
-        day: dayIndex,
-        dayNameLong,
-        dayNameShort,
-        month: monthIndex,
-        monthLongName,
-        monthShortName,
-        year,
-        mode,
-        locale,
-        placeholderValue: TimeUtilitiesService.setPlaceholder(locale, mode),
-        realExportValue: time.toString(),
-        timestamp: time.getTime(),
-        timeInputPresentation: this.buildTimeInputPresentation(time, {monthLongName, monthShortName, monthIndex}, mode, locale)
-      })
+      tempTime = time;
+      hasTime = true;
     } else {
-      const tempTime = new Date();
-      const monthIndex = tempTime.getMonth();
-      const dayIndex = tempTime.getDay();
-      const monthLongName = TimeUtilitiesService.getMonthNamesLong(locale)[monthIndex];
-      const monthShortName = TimeUtilitiesService.getMonthNamesShort(locale)[monthIndex];
-      const dayNameLong = TimeUtilitiesService.getDayNamesLong(locale)[dayIndex];
-      const dayNameShort = TimeUtilitiesService.getDayNamesShort(locale)[dayIndex];
-      const date = tempTime.getDate();
-      const year = tempTime.getFullYear();
-      fullDateTimeObject = Object.assign({}, {
-        value: time,
-        label,
-        date,
-        day: dayIndex,
-        dayNameLong,
-        dayNameShort,
-        month: monthIndex,
-        monthLongName,
-        monthShortName,
-        year,
-        mode,
-        locale,
-        placeholderValue: TimeUtilitiesService.setPlaceholder(locale, mode),
-        realExportValue: tempTime.toString(),
-        timestamp: tempTime.getTime(),
-        timeInputPresentation: ''
-
-      })
+      tempTime = new Date();
+      hasTime = false;
     }
 
-    UtilitiesService.ColorizeLogOrange('pazi object', fullDateTimeObject);
+    const monthIndex = tempTime.getMonth();
+    const dayIndex = tempTime.getDay();
+    const monthLongName = TimeUtilitiesService.getMonthNamesLong(locale)[monthIndex];
+    const monthShortName = TimeUtilitiesService.getMonthNamesShort(locale)[monthIndex];
+    const dayNameLong = TimeUtilitiesService.getDayNamesLong(locale)[dayIndex];
+    const dayNameShort = TimeUtilitiesService.getDayNamesShort(locale)[dayIndex];
+    const date = tempTime.getDate();
+    const year = tempTime.getFullYear();
+    const hours = tempTime.getHours();
+    const minutes = tempTime.getMinutes();
+    fullDateTimeObject = Object.assign({}, {
+      value: time,
+      label,
+      date,
+      day: dayIndex,
+      hours,
+      minutes,
+      dayNameLong,
+      dayNameShort,
+      month: monthIndex,
+      monthLongName,
+      monthShortName,
+      year,
+      mode,
+      locale,
+      placeholderValue: TimeUtilitiesService.setPlaceholder(locale, mode),
+      realExportValue: tempTime.toString(),
+      timestamp: tempTime.getTime(),
+      timeInputPresentation: hasTime ? this.buildTimeInputPresentation(time, {monthLongName, monthShortName, monthIndex}, mode, locale) : ''
+
+    })
+
     return fullDateTimeObject;
   }
 
@@ -172,21 +160,21 @@ export class TimeUtilitiesService {
       case PossibleContolModes.DATETIME:
         switch (locale) {
           case 'en':
-            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
+            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
           case'de':
-            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(time.getHours(), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}`;
+            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(time.getHours(), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}`;
           default:
-            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
+            return `${monthDataObject.monthLongName}/${UtilitiesService.zeroPad(time.getDate(), 2)}/${time.getFullYear().toString()} ${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
         }
         break;
       case PossibleContolModes.TIME:
         switch (locale) {
           case 'en':
-            return `${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
+            return `${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
           case'de':
-            return `${UtilitiesService.zeroPad(time.getHours(), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}`;
+            return `${UtilitiesService.zeroPad(time.getHours(), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}`;
           default:
-            return `${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getHours(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
+            return `${UtilitiesService.zeroPad(((time.getHours() + 11) % 12 + 1), 2)}:${UtilitiesService.zeroPad(time.getMinutes(), 2)}:${time.getHours() > 12 ? 'PM' : 'AM'}`;
         }
         break;
     }
@@ -237,5 +225,17 @@ export class TimeUtilitiesService {
     }
   }
 
-
+  static PrepareTimeValueToFullDateTimeFormat(valueToCheck: string, locale: string) {
+    const valuesArray = valueToCheck.split(':');
+    if (locale === 'en') {
+      if (valueToCheck[2] === 'PM') {
+        valuesArray[0] = (+valuesArray[0] + 12).toString();
+      }
+      const dateToTransform = new Date();
+      dateToTransform.setHours(+valuesArray[0]);
+      dateToTransform.setMinutes(+valuesArray[1]);
+      UtilitiesService.ColorizeLogOrange('pre stringa', dateToTransform)
+      return dateToTransform.toString();
+    }
+  }
 }

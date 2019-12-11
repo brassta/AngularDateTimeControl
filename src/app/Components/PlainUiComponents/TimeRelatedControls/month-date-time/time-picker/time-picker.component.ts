@@ -28,9 +28,7 @@ export enum Definitions {
   styleUrls: ['./time-picker.component.less']
 })
 export class TimePickerComponent implements OnInit {
-  hours: number;
   divider: string;
-  minutes: number;
   amPmDayPartRepresentation: string;
   timeInputPresentation: string;
 
@@ -38,7 +36,6 @@ export class TimePickerComponent implements OnInit {
   @Input() time: FullDateTimeObjectModel;
   label: string;
   formData: any;
-  realExportValue: Date;
   needAMPM: boolean;
 
 
@@ -53,9 +50,7 @@ export class TimePickerComponent implements OnInit {
       tempTime = new Date();
     }
     this.needAMPM = this.time.locale === 'en';
-    this.hours = tempTime.getHours();
-    this.minutes = tempTime.getMinutes();
-    this.amPmDayPartRepresentation = this.hours > 12 ? 'PM' : 'AM';
+    this.amPmDayPartRepresentation = tempTime.getHours() > 12 ? 'PM' : 'AM';
   }
 
 
@@ -64,30 +59,24 @@ export class TimePickerComponent implements OnInit {
     switch (definition) {
       case 'hours':
         if (direction === 'up') {
-          this.hours++;
-          tempTime = this.timeParser.rebuildTime(tempTime, this.hours, this.minutes);
+          tempTime.setHours(tempTime.getHours() + 1);
         } else {
-          this.hours--;
-          tempTime = this.timeParser.rebuildTime(tempTime, this.hours, this.minutes);
+          tempTime.setHours(tempTime.getHours() - 1);
         }
         break;
       case 'minutes':
         if (direction === 'up') {
-          this.minutes++;
-          tempTime = this.timeParser.rebuildTime(tempTime, this.hours, this.minutes);
+          tempTime.setMinutes(tempTime.getMinutes() + 1);
         } else {
-          this.minutes--;
-          tempTime = this.timeParser.rebuildTime(tempTime, this.hours, this.minutes);
+          tempTime.setMinutes(tempTime.getMinutes() - 1);
         }
         break;
       case 'ampm':
-        if (this.amPmDayPartRepresentation === 'AM') {
-          this.hours += 12;
+        if (direction === 'up') {
+          tempTime.setHours(tempTime.getHours() + 12);
         } else {
-          this.hours -= 12;
+          tempTime.setHours(tempTime.getHours() - 12);
         }
-        tempTime = this.timeParser.rebuildTime(tempTime, this.hours, this.minutes);
-        this.amPmDayPartRepresentation = this.amPmDayPartRepresentation === 'AM' ? 'PM' : 'AM';
     }
     this.pubSubService.Publish(ConstantsPubSub.PS_DATE_TIME_VALUE_CHANGED, {time: tempTime})
 

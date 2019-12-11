@@ -65,9 +65,6 @@ export class DatePickerComponent implements OnInit, OnChanges {
       this.nextMonthNameLong = TimeUtilitiesService.getMonthNamesLong()[this.currentMonthIndex + 1 === 12 ? 0 : this.currentMonthIndex + 1];
       this.nextMonthNameShort = TimeUtilitiesService.getMonthNamesShort()[this.currentMonthIndex + 1 === 12 ? 0 : this.currentMonthIndex + 1];
 
-      UtilitiesService.ColorizeLogYellow();
-      UtilitiesService.ColorizeLogYellow();
-      console.log(this.currentMonthNameLong, this.nextMonthNameLong, this.previousMonthNameLong);
       const daysValuesList = TimeUtilitiesService.buildCalendarMatrix(this.time.value);
       this.days = daysValuesList.map((item, index) => {
         return {
@@ -89,9 +86,6 @@ export class DatePickerComponent implements OnInit, OnChanges {
       this.nextMonthNameLong = TimeUtilitiesService.getMonthNamesLong()[this.currentMonthIndex + 1 === 12 ? 0 : this.currentMonthIndex + 1];
       this.nextMonthNameShort = TimeUtilitiesService.getMonthNamesShort()[this.currentMonthIndex + 1 === 12 ? 0 : this.currentMonthIndex + 1];
 
-      UtilitiesService.ColorizeLogYellow();
-      UtilitiesService.ColorizeLogYellow();
-      console.log(this.currentMonthNameLong, this.nextMonthNameLong, this.previousMonthNameLong);
       const daysValuesList = TimeUtilitiesService.buildCalendarMatrix(tempTime);
       this.days = daysValuesList.map((item, index) => {
         return {
@@ -101,7 +95,7 @@ export class DatePickerComponent implements OnInit, OnChanges {
       })
     }
 
-    console.log(this.days);
+
   }
 
   private buildCorrespondingMonthIndex(item: any, index: number): MonthDataObject {
@@ -131,11 +125,9 @@ export class DatePickerComponent implements OnInit, OnChanges {
   }
 
   setDateValue(date: DayObject) {
-    console.log(date);
     const currentDate = this.time.value || new Date();
     currentDate.setMonth(date.monthData.monthIndex);
     currentDate.setDate(date.value);
-    console.log(currentDate);
     this.pubSubService.Publish(ConstantsPubSub.PS_DATE_TIME_VALUE_CHANGED, {time: currentDate})
     this.prepareDateData();
 

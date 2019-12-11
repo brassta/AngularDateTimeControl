@@ -34,8 +34,6 @@ export class DateMonthHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    UtilitiesService.ColorizeLogGreen('header', this.time);
-
     this.prepareValuesForDisplaying();
   }
 
@@ -53,7 +51,18 @@ export class DateMonthHeaderComponent implements OnInit {
   }
 
   titleChanged($event: Event, mode: string) {
+    const tempTime = this.timeValue || new Date();
     const enteredValue = ($event.target as HTMLInputElement).innerHTML;
+    if (mode === 'Month') {
+      if (TimeUtilitiesService.getMonthNamesLong().includes(enteredValue)) {
+        const tempMonthIndex = TimeUtilitiesService.getMonthNamesLong().indexOf(enteredValue);
+        tempTime.setMonth(tempMonthIndex);
+        this.pubSubService.Publish(ConstantsPubSub.PS_DATE_TIME_VALUE_CHANGED, {time: tempTime});
+      }
+    } else if (mode === 'Year') {
+      tempTime.setFullYear(+enteredValue)
+      this.pubSubService.Publish(ConstantsPubSub.PS_DATE_TIME_VALUE_CHANGED, {time: tempTime});
+    }
   }
 
   getActualMonthIndexByName(enteredValue: string) {

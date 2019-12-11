@@ -1,16 +1,18 @@
-import {Component, Input, OnInit, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TimeUtilitiesService} from "@components/PlainUiComponents/TimeRelatedControls/time-utilities.service";
 import {UtilitiesService} from "@services/Utilities/utilities.service";
 import {PubsubService, Subscription} from "@services/PubSub/pubsub.service";
 import {ConstantsPubSub} from "@constants/Messages/PubSub/pubsub-constants";
 
-export enum MonthDateTimeControlModes {All = 'All', Date = 'Date', Month = 'Month', Time = 'Time'}
+export enum MonthDateTimeControlModes {ALL = 'All', DATE = 'Date', MONTH = 'Month', TIME = 'Time', DATETIME = 'DateTime'}
 
 export interface FullDateTimeObjectModel {
   value: Date,
   label: string;
   date: number;
   day: number;
+  hours: number;
+  minutes: number;
   dayNameLong: string;
   dayNameShort: string;
   month: number;
@@ -35,7 +37,7 @@ export interface AdditionalDataModel {
   templateUrl: './month-date-time.component.html',
   styleUrls: ['./month-date-time.component.less']
 })
-export class MonthDateTimeComponent implements OnInit, OnChanges {
+export class MonthDateTimeComponent implements OnInit {
   @Input() mode: string;
   @Input() inputData: any;
   fullDateTimeObject: FullDateTimeObjectModel;
@@ -56,9 +58,6 @@ export class MonthDateTimeComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('change change');
-  }
 
   private buildFullDateTimeObject(time: Date) {
     const additionalData: AdditionalDataModel = {
@@ -69,7 +68,22 @@ export class MonthDateTimeComponent implements OnInit, OnChanges {
   }
 
   timeValueChangedManually($event: FocusEvent) {
-
+    const field = ($event.target as HTMLInputElement);
+    let valueToCheck = field.value;
+    UtilitiesService.ColorizeLogBlue('uslo', valueToCheck, this.fullDateTimeObject.mode)
+    if(this.fullDateTimeObject.mode = MonthDateTimeControlModes.TIME){
+      valueToCheck = TimeUtilitiesService.PrepareTimeValueToFullDateTimeFormat(valueToCheck, this.fullDateTimeObject.locale)
+      UtilitiesService.ColorizeLogOrange('transformed', valueToCheck)
+    }
+    if (!isNaN(Date.parse(valueToCheck))) {
+      this.buildFullDateTimeObject(new Date(Date.parse(valueToCheck)));
+      field.classList.remove('ng-invalid', 'invalid', 'ng-valid');
+      field.classList.add('ng-valid');
+    } else {
+      console.log('nije proslo');
+      field.classList.remove('ng-valid', 'ng-invalid');
+      field.classList.add('ng-invalid', 'invalid');
+    }
   }
 
   keyUpCalled($event: Event) {
@@ -77,9 +91,7 @@ export class MonthDateTimeComponent implements OnInit, OnChanges {
   }
 
 
-
   toggleOpenedModal() {
-    console.log('vidimo se ovde');
     this.opened = !this.opened;
   }
 
@@ -88,11 +100,8 @@ export class MonthDateTimeComponent implements OnInit, OnChanges {
   }
 
 
-
-
   private subscribeToDateChangedEvent() {
     this.dateChangedSubscription = this.pubsubService.Subscribe(ConstantsPubSub.PS_DATE_TIME_VALUE_CHANGED, data => {
-      console.log('ikad ovo jebiga', data);
       this.buildFullDateTimeObject(data.time);
     })
   }
